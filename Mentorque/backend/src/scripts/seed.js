@@ -13,7 +13,9 @@ import { replaceTemplate } from "../services/availabilityWeek.js";
 
 const prisma = new PrismaClient();
 
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "admin@mentorque.dev").toLowerCase();
+const ADMIN_EMAIL = (
+  process.env.ADMIN_EMAIL || "admin@mentorque.dev"
+).toLowerCase();
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin1234";
 const ADMIN_NAME = process.env.ADMIN_NAME || "Admin User";
 const SEED_PASSWORD = process.env.SEED_PASSWORD || "password123";
@@ -22,20 +24,37 @@ const CALL_TYPES = [
   {
     key: "RESUME_REVAMP",
     label: "Resume Revamp",
-    description: "Polish and restructure a resume; ideally with a Big Tech mentor.",
-    weights: { bigTech: 0.45, communication: 0.15, domainMatch: 0.1, semantic: 0.3 },
+    description:
+      "Polish and restructure a resume; ideally with a Big Tech mentor.",
+    weights: {
+      bigTech: 0.45,
+      communication: 0.15,
+      domainMatch: 0.1,
+      semantic: 0.3,
+    },
   },
   {
     key: "JOB_MARKET_GUIDANCE",
     label: "Job Market Guidance",
-    description: "Navigating the job market, negotiation, positioning; prefers strong communicators.",
-    weights: { bigTech: 0.1, communication: 0.45, domainMatch: 0.15, semantic: 0.3 },
+    description:
+      "Navigating the job market, negotiation, positioning; prefers strong communicators.",
+    weights: {
+      bigTech: 0.1,
+      communication: 0.45,
+      domainMatch: 0.15,
+      semantic: 0.3,
+    },
   },
   {
     key: "MOCK_INTERVIEW",
     label: "Mock Interview",
     description: "Practice interview; prefers a mentor from the same domain.",
-    weights: { bigTech: 0.1, communication: 0.15, domainMatch: 0.45, semantic: 0.3 },
+    weights: {
+      bigTech: 0.1,
+      communication: 0.15,
+      domainMatch: 0.45,
+      semantic: 0.3,
+    },
   },
 ];
 
@@ -71,9 +90,12 @@ const MENTORS = [
     communicationScore: 82,
     tags: ["Tech", "Backend", "Big Tech", "Senior Developer", "India"],
     pattern: [
-      { dayOfWeek: 0, hour: 15 }, { dayOfWeek: 0, hour: 16 },
-      { dayOfWeek: 2, hour: 15 }, { dayOfWeek: 2, hour: 16 },
-      { dayOfWeek: 4, hour: 10 }, { dayOfWeek: 4, hour: 11 },
+      { dayOfWeek: 0, hour: 15 },
+      { dayOfWeek: 0, hour: 16 },
+      { dayOfWeek: 2, hour: 15 },
+      { dayOfWeek: 2, hour: 16 },
+      { dayOfWeek: 4, hour: 10 },
+      { dayOfWeek: 4, hour: 11 },
     ],
   },
   {
@@ -89,8 +111,10 @@ const MENTORS = [
     communicationScore: 93,
     tags: ["Non-tech", "Product", "Big Tech", "Good Communication", "Ireland"],
     pattern: [
-      { dayOfWeek: 1, hour: 9 }, { dayOfWeek: 1, hour: 10 },
-      { dayOfWeek: 3, hour: 9 }, { dayOfWeek: 3, hour: 10 },
+      { dayOfWeek: 1, hour: 9 },
+      { dayOfWeek: 1, hour: 10 },
+      { dayOfWeek: 3, hour: 9 },
+      { dayOfWeek: 3, hour: 10 },
       { dayOfWeek: 3, hour: 14 },
     ],
   },
@@ -107,9 +131,11 @@ const MENTORS = [
     communicationScore: 74,
     tags: ["Tech", "Data Science", "Big Tech", "Senior Developer", "India"],
     pattern: [
-      { dayOfWeek: 0, hour: 17 }, { dayOfWeek: 0, hour: 18 },
+      { dayOfWeek: 0, hour: 17 },
+      { dayOfWeek: 0, hour: 18 },
       { dayOfWeek: 2, hour: 17 },
-      { dayOfWeek: 5, hour: 8 }, { dayOfWeek: 5, hour: 9 },
+      { dayOfWeek: 5, hour: 8 },
+      { dayOfWeek: 5, hour: 9 },
     ],
   },
   {
@@ -125,8 +151,10 @@ const MENTORS = [
     communicationScore: 88,
     tags: ["Non-tech", "Design", "Startup", "Good Communication", "Ireland"],
     pattern: [
-      { dayOfWeek: 1, hour: 13 }, { dayOfWeek: 1, hour: 14 },
-      { dayOfWeek: 4, hour: 13 }, { dayOfWeek: 4, hour: 14 },
+      { dayOfWeek: 1, hour: 13 },
+      { dayOfWeek: 1, hour: 14 },
+      { dayOfWeek: 4, hour: 13 },
+      { dayOfWeek: 4, hour: 14 },
     ],
   },
   {
@@ -142,52 +170,161 @@ const MENTORS = [
     communicationScore: 79,
     tags: ["Tech", "Frontend", "Big Tech", "Senior Developer", "India"],
     pattern: [
-      { dayOfWeek: 2, hour: 11 }, { dayOfWeek: 2, hour: 12 },
-      { dayOfWeek: 4, hour: 16 }, { dayOfWeek: 4, hour: 17 },
+      { dayOfWeek: 2, hour: 11 },
+      { dayOfWeek: 2, hour: 12 },
+      { dayOfWeek: 4, hour: 16 },
+      { dayOfWeek: 4, hour: 17 },
       { dayOfWeek: 6, hour: 9 },
     ],
   },
 ];
 
 const USERS = [
-  { name: "Aditya Sharma", domain: "Backend", tags: ["Tech", "Backend"], description: "Backend engineer with 2 years experience looking to move to a bigger company; wants resume feedback from someone who's been through Big Tech hiring." },
-  { name: "Sneha Patil", domain: "Frontend", tags: ["Tech", "Frontend", "Asks Lots Of Questions"], description: "Frontend developer prepping for interviews, asks a lot of clarifying questions and wants a mentor who explains things patiently." },
-  { name: "Cathal Murphy", domain: "Product", tags: ["Non-tech", "Product"], description: "Product manager pivoting from consulting, needs guidance on how to talk about the job market and negotiate offers." },
-  { name: "Meera Iyer", domain: "Data Science", tags: ["Tech", "Data Science"], description: "Data scientist wanting a rigorous mock interview on ML system design before final rounds." },
-  { name: "Aoife Kelly", domain: "Design", tags: ["Non-tech", "Design"], description: "Product designer looking for a portfolio and resume review ahead of interviews at design-led companies." },
-  { name: "Vikram Singh", domain: "Backend", tags: ["Tech", "Backend", "Good Communication"], description: "Senior backend engineer targeting FAANG, wants a resume revamp from someone who's hired at that level." },
-  { name: "Fiona Walsh", domain: "Product", tags: ["Non-tech", "Product", "Asks Lots Of Questions"], description: "Early-career PM navigating a tough job market, wants coaching on positioning and communication." },
-  { name: "Karan Verma", domain: "Frontend", tags: ["Tech", "Frontend"], description: "Frontend developer preparing for coding interviews, wants a realistic mock interview with feedback." },
-  { name: "Niamh Doyle", domain: "Data Science", tags: ["Tech", "Data Science", "Good Communication"], description: "Analytics-to-DS transition, wants help articulating impact clearly on a resume." },
-  { name: "Arjun Reddy", domain: "Design", tags: ["Non-tech", "Design"], description: "UX designer looking for job market guidance and interview prep as they look to relocate." },
+  {
+    name: "Aditya Sharma",
+    domain: "Backend",
+    tags: ["Tech", "Backend"],
+    description:
+      "Backend engineer with 2 years experience looking to move to a bigger company; wants resume feedback from someone who's been through Big Tech hiring.",
+  },
+  {
+    name: "Sneha Patil",
+    domain: "Frontend",
+    tags: ["Tech", "Frontend", "Asks Lots Of Questions"],
+    description:
+      "Frontend developer prepping for interviews, asks a lot of clarifying questions and wants a mentor who explains things patiently.",
+  },
+  {
+    name: "Cathal Murphy",
+    domain: "Product",
+    tags: ["Non-tech", "Product"],
+    description:
+      "Product manager pivoting from consulting, needs guidance on how to talk about the job market and negotiate offers.",
+  },
+  {
+    name: "Meera Iyer",
+    domain: "Data Science",
+    tags: ["Tech", "Data Science"],
+    description:
+      "Data scientist wanting a rigorous mock interview on ML system design before final rounds.",
+  },
+  {
+    name: "Aoife Kelly",
+    domain: "Design",
+    tags: ["Non-tech", "Design"],
+    description:
+      "Product designer looking for a portfolio and resume review ahead of interviews at design-led companies.",
+  },
+  {
+    name: "Vikram Singh",
+    domain: "Backend",
+    tags: ["Tech", "Backend", "Good Communication"],
+    description:
+      "Senior backend engineer targeting FAANG, wants a resume revamp from someone who's hired at that level.",
+  },
+  {
+    name: "Fiona Walsh",
+    domain: "Product",
+    tags: ["Non-tech", "Product", "Asks Lots Of Questions"],
+    description:
+      "Early-career PM navigating a tough job market, wants coaching on positioning and communication.",
+  },
+  {
+    name: "Karan Verma",
+    domain: "Frontend",
+    tags: ["Tech", "Frontend"],
+    description:
+      "Frontend developer preparing for coding interviews, wants a realistic mock interview with feedback.",
+  },
+  {
+    name: "Niamh Doyle",
+    domain: "Data Science",
+    tags: ["Tech", "Data Science", "Good Communication"],
+    description:
+      "Analytics-to-DS transition, wants help articulating impact clearly on a resume.",
+  },
+  {
+    name: "Arjun Reddy",
+    domain: "Design",
+    tags: ["Non-tech", "Design"],
+    description:
+      "UX designer looking for job market guidance and interview prep as they look to relocate.",
+  },
 ];
 
 async function upsertTags(tagDefs) {
   const map = new Map();
   for (const t of tagDefs) {
-    const tag = await prisma.tag.upsert({ where: { name: t.name }, create: t, update: {} });
+    const tag = await prisma.tag.upsert({
+      where: { name: t.name },
+      create: t,
+      update: {},
+    });
     map.set(tag.name, tag);
   }
   return map;
 }
 
-async function upsertPerson({ name, email, password, role, extra = {}, tagNames = [], tagMap }) {
+async function upsertPerson({
+  name,
+  email,
+  password,
+  role,
+  extra = {},
+  tagNames = [],
+  tagMap,
+}) {
   const hashed = await bcrypt.hash(password, 12);
-  const data = {
-    name, email, password: hashed, role, timezone: "UTC", ...extra,
-    tags: { set: tagNames.map((n) => ({ id: tagMap.get(n).id })) },
-  };
-  return prisma.user.upsert({
-    where: { email },
-    create: { id: uuidv4(), ...data },
-    update: data,
+
+  const tagConnections = tagNames
+    .map((name) => tagMap.get(name))
+    .filter(Boolean)
+    .map((tag) => ({
+      id: tag.id,
+    }));
+
+  return await prisma.user.upsert({
+    where: {
+      email,
+    },
+
+    create: {
+      id: uuidv4(),
+      name,
+      email,
+      password: hashed,
+      role,
+      timezone: "UTC",
+      ...extra,
+
+      tags: {
+        connect: tagConnections,
+      },
+    },
+
+    update: {
+      name,
+      email,
+      password: hashed,
+      role,
+      timezone: "UTC",
+      ...extra,
+
+      tags: {
+        set: tagConnections,
+      },
+    },
   });
 }
 
 async function main() {
   console.log("Seeding call types...");
   for (const ct of CALL_TYPES) {
-    await prisma.callType.upsert({ where: { key: ct.key }, create: ct, update: ct });
+    await prisma.callType.upsert({
+      where: { key: ct.key },
+      create: ct,
+      update: ct,
+    });
   }
 
   console.log("Seeding tags...");
@@ -195,46 +332,110 @@ async function main() {
 
   console.log("Seeding admin...");
   await upsertPerson({
-    name: ADMIN_NAME, email: ADMIN_EMAIL, password: ADMIN_PASSWORD, role: "ADMIN", tagMap,
+    name: ADMIN_NAME,
+    email: ADMIN_EMAIL,
+    password: ADMIN_PASSWORD,
+    role: "ADMIN",
+    tagMap,
   });
 
   console.log("Seeding mentors...");
   for (const m of MENTORS) {
     const mentor = await upsertPerson({
-      name: m.name, email: m.email, password: SEED_PASSWORD, role: "MENTOR", tagMap,
+      name: m.name,
+      email: m.email,
+      password: SEED_PASSWORD,
+      role: "MENTOR",
+      tagMap,
       tagNames: m.tags,
       extra: {
-        description: m.description, company: m.company, isBigTech: m.isBigTech,
-        domain: m.domain, location: m.location, yearsExperience: m.yearsExperience,
-        communicationScore: m.communicationScore, embedding: null, embeddingModel: null,
+        description: m.description,
+        company: m.company,
+        isBigTech: m.isBigTech,
+        domain: m.domain,
+        location: m.location,
+        yearsExperience: m.yearsExperience,
+        communicationScore: m.communicationScore,
+        embedding: null,
+        embeddingModel: null,
       },
     });
-    await replaceTemplate({ userId: null, mentorId: mentor.id, role: "MENTOR" }, m.pattern);
+    await replaceTemplate(
+      { userId: null, mentorId: mentor.id, role: "MENTOR" },
+      m.pattern,
+    );
   }
 
   console.log("Seeding users...");
   const userPatterns = [
-    [{ dayOfWeek: 0, hour: 15 }, { dayOfWeek: 0, hour: 16 }, { dayOfWeek: 2, hour: 15 }],
-    [{ dayOfWeek: 1, hour: 9 }, { dayOfWeek: 1, hour: 10 }, { dayOfWeek: 3, hour: 9 }],
-    [{ dayOfWeek: 0, hour: 17 }, { dayOfWeek: 2, hour: 17 }, { dayOfWeek: 5, hour: 8 }],
-    [{ dayOfWeek: 1, hour: 13 }, { dayOfWeek: 4, hour: 13 }, { dayOfWeek: 4, hour: 14 }],
-    [{ dayOfWeek: 2, hour: 11 }, { dayOfWeek: 4, hour: 16 }, { dayOfWeek: 4, hour: 17 }],
-    [{ dayOfWeek: 0, hour: 15 }, { dayOfWeek: 0, hour: 16 }, { dayOfWeek: 4, hour: 10 }],
-    [{ dayOfWeek: 1, hour: 9 }, { dayOfWeek: 3, hour: 10 }, { dayOfWeek: 3, hour: 14 }],
-    [{ dayOfWeek: 2, hour: 11 }, { dayOfWeek: 2, hour: 12 }, { dayOfWeek: 6, hour: 9 }],
-    [{ dayOfWeek: 0, hour: 17 }, { dayOfWeek: 0, hour: 18 }, { dayOfWeek: 5, hour: 9 }],
-    [{ dayOfWeek: 1, hour: 13 }, { dayOfWeek: 1, hour: 14 }, { dayOfWeek: 4, hour: 14 }],
+    [
+      { dayOfWeek: 0, hour: 15 },
+      { dayOfWeek: 0, hour: 16 },
+      { dayOfWeek: 2, hour: 15 },
+    ],
+    [
+      { dayOfWeek: 1, hour: 9 },
+      { dayOfWeek: 1, hour: 10 },
+      { dayOfWeek: 3, hour: 9 },
+    ],
+    [
+      { dayOfWeek: 0, hour: 17 },
+      { dayOfWeek: 2, hour: 17 },
+      { dayOfWeek: 5, hour: 8 },
+    ],
+    [
+      { dayOfWeek: 1, hour: 13 },
+      { dayOfWeek: 4, hour: 13 },
+      { dayOfWeek: 4, hour: 14 },
+    ],
+    [
+      { dayOfWeek: 2, hour: 11 },
+      { dayOfWeek: 4, hour: 16 },
+      { dayOfWeek: 4, hour: 17 },
+    ],
+    [
+      { dayOfWeek: 0, hour: 15 },
+      { dayOfWeek: 0, hour: 16 },
+      { dayOfWeek: 4, hour: 10 },
+    ],
+    [
+      { dayOfWeek: 1, hour: 9 },
+      { dayOfWeek: 3, hour: 10 },
+      { dayOfWeek: 3, hour: 14 },
+    ],
+    [
+      { dayOfWeek: 2, hour: 11 },
+      { dayOfWeek: 2, hour: 12 },
+      { dayOfWeek: 6, hour: 9 },
+    ],
+    [
+      { dayOfWeek: 0, hour: 17 },
+      { dayOfWeek: 0, hour: 18 },
+      { dayOfWeek: 5, hour: 9 },
+    ],
+    [
+      { dayOfWeek: 1, hour: 13 },
+      { dayOfWeek: 1, hour: 14 },
+      { dayOfWeek: 4, hour: 14 },
+    ],
   ];
 
   for (let i = 0; i < USERS.length; i++) {
     const u = USERS[i];
     const email = `${u.name.toLowerCase().replace(/[^a-z]+/g, ".")}@mentorque.dev`;
     const user = await upsertPerson({
-      name: u.name, email, password: SEED_PASSWORD, role: "USER", tagMap,
+      name: u.name,
+      email,
+      password: SEED_PASSWORD,
+      role: "USER",
+      tagMap,
       tagNames: u.tags,
       extra: { description: u.description, location: null },
     });
-    await replaceTemplate({ userId: user.id, mentorId: null, role: "USER" }, userPatterns[i]);
+    await replaceTemplate(
+      { userId: user.id, mentorId: null, role: "USER" },
+      userPatterns[i],
+    );
   }
 
   console.log("\nSeed complete.");
